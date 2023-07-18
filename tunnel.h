@@ -1,8 +1,6 @@
 #pragma once
 
 #include <QWidget>
-#define M_PI 3.1415926
-
 
 void calculateIntersectionPoints(const QPointF &p1, const QPointF &p2, const float &r1, const float &r2, QPointF &upIntersection);
 //calculateIntersectionPoints 重载
@@ -18,7 +16,7 @@ public:
          //_x3(40), _y3(20), _r3(160)
     {}
 
-    void generate_point(QVector<QPoint> &);
+    void generate_point(QVector<QPointF> &);
     void getCenter(QPoint &Center1, QPoint &Center2, QPoint &Center3);
 
     void updateTunnel1(const float &deltaX, const float &deltaY, const float &deltaR1, const float &deltaR2); //整体位置的修改的和半径的修改
@@ -44,7 +42,7 @@ public:
         :_x(0.0f), _y(0.0f), _r(200.0f), _h(200.0f)
     {}
 
-    void generate_point(QVector<QPoint>&);
+    void generate_point(QVector<QPointF>&);
     void getCenter(QPoint& Center) {Center = QPoint(_x, _y);}
 
     //传入改变量
@@ -71,7 +69,7 @@ public:
          _x3(80.0f), _y3(-20.0f), _r3(190.0f),
          _x4(0.0f), _y4(190.0f), _r4(410.0f)
     {}
-    void generate_points(QVector<QPoint>& points);
+    void generate_points(QVector<QPointF>& points);
     void getCenter(QVector<QPoint>& Centers);
 
     //整体位置和某个半径的修改

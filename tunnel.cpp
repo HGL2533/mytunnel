@@ -1,6 +1,10 @@
 #include "tunnel.h"
 #include <iostream>
-const int numSegments = 100;  //定义圆弧的分段数
+#include <qmath.h>
+
+namespace {
+    const int numSegments = 100;  //定义圆弧的分段数
+}
 
 void TunnelTemplate1::getCenter(QPoint &Center1, QPoint &Center2, QPoint &Center3)
 {
@@ -9,11 +13,11 @@ void TunnelTemplate1::getCenter(QPoint &Center1, QPoint &Center2, QPoint &Center
     Center2 = QPoint(2*_x1 - _x2, _y2);
 }
 
-void TunnelTemplate1::generate_point(QVector<QPoint> & points)
+void TunnelTemplate1::generate_point(QVector<QPointF> & points)
 {
     QPointF intersectionPointUp;
-    QPoint temp;
-    QVector<QPoint> tempPoints;
+    QPointF temp;
+    QVector<QPointF> tempPoints;
     calculateIntersectionPoints(QPointF(_x1, _y1), QPointF(_x2, _y2), _r1, _r2, intersectionPointUp);
     if(points.size())
         points.clear();
@@ -25,20 +29,20 @@ void TunnelTemplate1::generate_point(QVector<QPoint> & points)
         float angle = angle2start + i * angle2Step;  // angle的起点是angle2start + i * angle2Step;
         float x = _x2 + _r2 * cos(angle);
         float y = _y2 + _r2 * sin(angle);
-        points.push_back(QPoint(x,y));
-        tempPoints.push_back(QPoint(2*_x1 - x,y));
+        points.push_back(QPointF(x,y));
+        tempPoints.push_back(QPointF(2*_x1 - x,y));
     }
 
     const float angle1start = acosf((intersectionPointUp.x() - _x1)/_r1);
-    const float angle1end = M_PI / 2;
+    const float angle1end =  M_PI / 2;
     const float angle1Step = (angle1end - angle1start) / numSegments;
     for(int i = 0; i < numSegments; i++)
     {
         float angle = angle1start + i * angle1Step;
         float x = _x1 + _r1 * cos(angle);
         float y = _y1 + _r1 * sin(angle);
-        points.push_back(QPoint(x,y));
-        tempPoints.push_back(QPoint(2*_x1 - x,y));
+        points.push_back(QPointF(x,y));
+        tempPoints.push_back(QPointF(2*_x1 - x,y));
     }
     while(tempPoints.size())
     {
@@ -65,21 +69,21 @@ void TunnelTemplate1::updateTunnel1Part(const float &deltaX, const float &deltaY
 }
 
 
-void TunnelTemplate2::generate_point(QVector<QPoint>& points)
+void TunnelTemplate2::generate_point(QVector<QPointF>& points)
 {
     //注意，每次调用generate_point需要把points已有数据清空
     if(points.size())
         points.clear();
     const float angleStep = M_PI / numSegments;
-    points.push_back(QPoint(_x + _r, _y - _h));
-    for (int i = 0; i <= numSegments; ++i)
+    points.push_back(QPointF(_x + _r, _y - _h));
+    for (int i = 0; i < numSegments; ++i)
     {
         float angle = angleStep * i;
         float x = _x + _r * cos(angle);
         float y = _y + _r * sin(angle);
-        points.push_back(QPoint(x, y));
+        points.push_back(QPointF(x, y));
     }
-        points.push_back(QPoint(_x - _r, _y - _h));
+    points.push_back(QPointF(_x - _r, _y - _h));
 }
 
 //传入两个圆，求得y大一些的那个交点
@@ -156,13 +160,13 @@ void calculateIntersectionPoints(const QPointF &p1, const QPointF &p2, const flo
 }
 
 
-void TunnelTemplate3::generate_points(QVector<QPoint>& points)
+void TunnelTemplate3::generate_points(QVector<QPointF>& points)
 {
     if(points.size())
         points.clear();
     QPointF intersectionPointUp34, intersectionPointUp13; //34,13分别代表O3、O4交点，O1、O3交点
-    QPoint temp;
-    QVector<QPoint> tempPoints;
+    QPointF temp;
+    QVector<QPointF> tempPoints;
     calculateIntersectionPoints(QPointF(_x3, _y3), QPointF(_x4, _y4), _r3, _r4, intersectionPointUp34, intersectionPointUp34);
     calculateIntersectionPoints(QPointF(_x1, _y1), QPointF(_x3, _y3), _r1, _r3, intersectionPointUp13, intersectionPointUp13);
 
@@ -177,8 +181,8 @@ void TunnelTemplate3::generate_points(QVector<QPoint>& points)
         float angle = angle34start + angle34Step * i;
         float x = _x4 + _r4 * cos(angle);
         float y = _y4 + _r4 * sin(angle);
-        points.push_back(QPoint(x, y));
-        tempPoints.push_back(QPoint(2 * _x1 - x, y));
+        points.push_back(QPointF(x, y));
+        tempPoints.push_back(QPointF(2 * _x1 - x, y));
     }
     const float angle13start = -asinf((_y3 - intersectionPointUp34.y()) / _r3);
     const float angle13end = -asinf((_y3 - intersectionPointUp13.y()) / _r3);
@@ -188,8 +192,8 @@ void TunnelTemplate3::generate_points(QVector<QPoint>& points)
         float angle = angle13start + angle13Step * i;
         float x = _x3 + _r3 * cos(angle);
         float y = _y3 + _r3 * sin(angle);
-        points.push_back(QPoint(x, y));
-        tempPoints.push_back(QPoint(2 * _x1 - x, y)); //关于O1 O4圆心所在直线对称
+        points.push_back(QPointF(x, y));
+        tempPoints.push_back(QPointF(2 * _x1 - x, y)); //关于O1 O4圆心所在直线对称
     }
     const float angle11start = -asinf((_y1 - intersectionPointUp13.y()) / _r1);
     const float angle11end = M_PI / 2;
@@ -199,8 +203,8 @@ void TunnelTemplate3::generate_points(QVector<QPoint>& points)
         float angle = angle11start + angle11Step * i;
         float x = _x1 + _r1 * cos(angle);
         float y = _y1 + _r1 * sin(angle);
-        points.push_back(QPoint(x, y));
-        tempPoints.push_back(QPoint(2 * _x1 - x, y));
+        points.push_back(QPointF(x, y));
+        tempPoints.push_back(QPointF(2 * _x1 - x, y));
     }
     while(tempPoints.size())
     {

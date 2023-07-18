@@ -14,13 +14,17 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
 QT_END_NAMESPACE
 
+
 class Widget : public QWidget
 {
     Q_OBJECT
 
+
 public:
-    Widget(QWidget *parent = nullptr);
+    explicit Widget(QWidget* parent = nullptr);
     ~Widget();
+
+
 
     //隧道截面延申的3d模型
     Eigen::MatrixXd verts;
@@ -32,16 +36,16 @@ public:
 
     /*2D截面编辑部分*/
     // tunnel1的部分
-    QVector<QPoint> widgetPoints1;
+    QVector<QPointF> widgetPoints1;
     QPoint tunnel1Center1, tunnel1Center2, tunnel1Center3;
 
 
     // tunnel2的部分
-    QVector<QPoint> widgetPoints2;
+    QVector<QPointF> widgetPoints2;
     QPoint tunnel2Center;
 
     //tunnel3的部分
-    QVector<QPoint> widgetPoints3;
+    QVector<QPointF> widgetPoints3;
     QVector<QPoint> tunnel3Centers;
 
 
@@ -65,7 +69,8 @@ private slots:
     void on_pushButton4_clicked();
 
 private:
-    Ui::Widget *ui;
+    Ui::Widget*ui;
+
 
     TunnelTemplate1 _tunnel1;
     TunnelTemplate2 _tunnel2;

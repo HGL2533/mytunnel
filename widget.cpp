@@ -44,6 +44,7 @@ void Widget::on_pushButton3_clicked()
 
 void Widget::on_pushButton4_clicked()
 {
+    int lengthOfTunnel = 5000;
     if(drawFlag1)
     {
         for(int i = 0; i < widgetPoints1.size(); i++)
@@ -55,33 +56,33 @@ void Widget::on_pushButton4_clicked()
         double tunnelHeight = widgetPoints1[200].y();
         double tunnelWidth = 2 * widgetPoints1[0].x();
         double miny = widgetPoints1[0].y();
-        makeBaseCuboidModel(baseVerts, baseFaces, 10000, tunnelHeight, tunnelWidth, miny);
+        makeBaseCuboidModel(baseVerts, baseFaces, lengthOfTunnel, tunnelHeight, tunnelWidth, miny);
 
-        QVector<QPoint> widgetLessPoints1;
-        for (int i = 0; i < 40; i++)
+        QVector<QPointF> widgetLessPoints1; //widgetLessPoints1 有102个顶点
+        for (int i = 0; i < 100; i++)
         {
-            widgetLessPoints1.push_back(widgetPoints1[i * 10]);
+            widgetLessPoints1.push_back(widgetPoints1[i * 4]);
+            if(i < 1)
+                widgetLessPoints1.push_back(widgetPoints1[1]);
         }
         widgetLessPoints1.push_back(widgetPoints1[widgetPoints1.size() - 1]);
-        makeTunnel3DModel(verts, faces, 10500, widgetLessPoints1, 41);
-        //makeTunnel3DModel(verts, faces, 1050, widgetPoints1, 400);
+     
+        std::cout << widgetLessPoints1.size() << widgetPoints1.size();
 
+        makeTunnel3DModel1(verts, faces, lengthOfTunnel, widgetLessPoints1);
+        std::cout << "!!!";
+
+
+
+        output(verts, faces, "1outtunnel");
+        output(baseVerts, baseFaces, "1outbase");
 
         Mesh mesh1, mesh2;
-        ConvertMatrix2SurfaceMesh(verts, faces, mesh2);
         ConvertMatrix2SurfaceMesh(baseVerts, baseFaces, mesh1);
-
-        /*std::string filename1 = "out111";
-        std::string filename2 = "out222";
-        output(baseVerts, baseFaces, filename1);
-        output(verts, faces, filename2);
-        PMP::IO::read_polygon_mesh("out111.off", mesh1);
-        PMP::IO::read_polygon_mesh("out222.off", mesh2);*/
-
+        ConvertMatrix2SurfaceMesh(verts, faces, mesh2);
         Mesh result1;
         PMP::corefine_and_compute_difference(mesh1, mesh2, result1);
         CGAL::IO::write_polygon_mesh("result1.off", result1, CGAL::parameters::stream_precision(17));
-   
     }
     if(drawFlag2)
     {
@@ -97,8 +98,8 @@ void Widget::on_pushButton4_clicked()
         double tunnelHeight = widgetPoints2[widgetPoints2.size() / 2].y() - widgetPoints2[0].y();
         double tunnelWidth = widgetPoints2[0].x() - widgetPoints2[widgetPoints2.size() - 1].x();
         double miny = widgetPoints2[0].y();
-        makeBaseCuboidModel(baseVerts, baseFaces, 6000, tunnelHeight, tunnelWidth, miny);
-        makeTunnel3DModel(verts, faces, 6050, widgetPoints2, widgetPoints2.size());
+        makeBaseCuboidModel(baseVerts, baseFaces, lengthOfTunnel, tunnelHeight, tunnelWidth, miny);
+        makeTunnel3DModel2(verts, faces, lengthOfTunnel,widgetPoints2);
         output(verts, faces, "2outtunnel");
         output(baseVerts, baseFaces, "2outbase");
 
@@ -121,17 +122,42 @@ void Widget::on_pushButton4_clicked()
         }
         double tunnelHeight = widgetPoints3[widgetPoints3.size() / 2].y() - widgetPoints3[0].y();
         double tunnelWidth = widgetPoints3[200].x() - widgetPoints3[400].x();
-        double miny = widgetPoints3[0].y();
-        makeBaseCuboidModel(baseVerts, baseFaces, 6000, tunnelHeight, tunnelWidth, miny);
+        double miny = widgetPoints3[0].y()-1;
+        makeBaseCuboidModel(baseVerts, baseFaces, lengthOfTunnel, tunnelHeight, tunnelWidth, miny);
 
-        QVector<QPoint> widgetLessPoints3;
-        for (int i = 0; i < widgetPoints3.size()/10; i++)
+
+        //对原有的隧道多边形顶点进行削减采样
+        QVector<QPointF> widgetLessPoints3;
+        for (int i = 0; i < 5; ++i)
         {
-            widgetLessPoints3.push_back(widgetPoints3[i * 10]);
+            widgetLessPoints3.push_back(widgetPoints3[i * 20]);
         }
-        makeTunnel3DModel(verts, faces, 6050, widgetLessPoints3, widgetLessPoints3.size()+1);
-
-        //makeTunnel3DModel(verts, faces, 6050, widgetPoints3, widgetPoints3.size());
+        widgetLessPoints3.push_back(widgetPoints3[99]);
+        for (int i = 0; i < 10; ++i)
+        {
+            widgetLessPoints3.push_back(widgetPoints3[100 + i * 10]);
+        }
+        widgetLessPoints3.push_back(widgetPoints3[199]);
+        for (int i = 0; i < 20; ++i)
+        {
+            widgetLessPoints3.push_back(widgetPoints3[200 + i * 5]);
+        }
+        widgetLessPoints3.push_back(widgetPoints3[299]);
+        for (int i = 0; i < 20; ++i)
+        {
+            widgetLessPoints3.push_back(widgetPoints3[300 + i * 5]);
+        }
+        widgetLessPoints3.push_back(widgetPoints3[399]);
+        for (int i = 0; i < 10; ++i)
+        {
+            widgetLessPoints3.push_back(widgetPoints3[400 + i * 10]);
+        }
+        widgetLessPoints3.push_back(widgetPoints3[499]);
+        for (int i = 0; i < 5; ++i)
+        {
+            widgetLessPoints3.push_back(widgetPoints3[500 + i * 20]);
+        }
+        makeTunnel3DModel3(verts, faces, lengthOfTunnel + 100, widgetLessPoints3);
         output(verts, faces, "3outtunnel");
         output(baseVerts, baseFaces, "3outbase");
 
